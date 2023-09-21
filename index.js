@@ -78,12 +78,13 @@ app.post('/login',[
     const { email, password } = req.body ;
 
     try{
-
+      // check whether such email exist in database or not
       let user = await User.findOne( {email}) ;
       if( !user ) {
         return resp.status(400).json({error:"Wrong credentials"})
       }
 
+      //check password
       const pass_compare = password === user.password ? 1 : 0;
 
       if( !pass_compare ){
@@ -109,9 +110,12 @@ app.post('/login',[
     // Route 3 : Forget Password : 
 
     app.get('/forget-password', ( req, resp, next) => {
-       resp.render('forget-password');
+     
+     //this would send a page to get email  
+     resp.render('forget-password');
     })
 
+    // to check entered email valid or not
     app.post('/forget-password', async( req, resp) => {
         const { email } = req.body ;
 
@@ -127,14 +131,17 @@ app.post('/login',[
         resp.send(`Click on the link to reset :::<a href=${link}>Link</a>`);
     })
     
-    // Reset Password
+    // to Reset Password
 
     app.get('/reset-password/:id/:token', ( req, resp) => {
-        resp.render('reset-password');
+    
+     //to enter new password  
+     resp.render('reset-password');
     })
     
     app.post('/reset-password/:id/:token', async(req, resp) => {
-        
+
+        //save the changes
         const result = await User.updateOne(
         { id: req.params.id },
         { $set: {password:req.body.password} }
